@@ -1,5 +1,6 @@
 package com.mycompany.fractals;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -32,9 +33,29 @@ public class SimpleBitmap extends JPanel {
         scale.setToScale(((double) w) / BITMAP_WIDTH, ((double) h) / BITMAP_HEIGHT);
 
         WritableRaster raster = this.image.getRaster();
-
-//        int[] black = {0, 0, 0};
-//        int[] yellow = {255, 255, 0};
+        
+        int [][] palette = new int[64][3];
+        
+        Color startColor = Color.MAGENTA;
+        int r0 = startColor.getRed();
+        int g0 = startColor.getGreen();
+        int b0 = startColor.getBlue();
+        
+        Color endColor = Color.CYAN;
+        int r1 = endColor.getRed();
+        int g1 = endColor.getGreen();
+        int b1 = endColor.getBlue();
+        
+        for( int i = 0; i < 64; i++ ) {
+            double fraction = ((double) i) / 63;
+            int red = (int) ((1 - fraction) * r0 + fraction * r1);
+            int green = (int) ((1 - fraction) * g0 + fraction * g1);
+            int blue = (int) ((1 - fraction) * b0 + fraction * b1);
+            
+            palette[i][0] = red; //red;
+            palette[i][1] = green; //green;
+            palette[i][2] = blue; //blue;            
+        } // for
 
         for (int j = 0; j < h; j++) {
             for (int i = 0; i < w; i++) {
@@ -42,9 +63,9 @@ public class SimpleBitmap extends JPanel {
                 double u = FractalCalc.uMap(i);
                 double v = FractalCalc.vMap(j);
                 
-                int count = FractalCalc.mandelbrot(u, v);
+                int count = FractalCalc.julia(u, v);
                 
-                int[] color = {count / 2, count / 2, count}; 
+                int[] color = {palette[count][0], palette[count][1], palette[count][2]}; 
                 raster.setPixel(i, j, color);
                 
             } //for
